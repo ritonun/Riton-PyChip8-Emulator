@@ -50,14 +50,14 @@ class TestOpcode:
 
     def test_1nnn(self):
         # jump to addr nnn
-        opcode_setup(0x10, 0xFF)
+        cpu = opcode_setup(0x10, 0xFF)
         cpu.decode()
 
         assert cpu.pc == 0xFF 
 
-    def test_6nnn(self):
+    def test_6xkk(self):
         # set Vx = kk
-        cpu = CPU()
-        cpu.initialize_cpu()
+        cpu = opcode_setup(0x66, 0x13)
+        cpu.decode()
 
-        cpu.memory[0] = 
+        assert cpu.V[6] == 0x13

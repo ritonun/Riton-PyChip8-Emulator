@@ -125,5 +125,8 @@ class CPU:
             case 0x1:
                 # 0x1nnn jump to location nnn
                 self.pc = opcode & 0x0FFF
+            case 0x6:
+                # 0x6xkk set Vx = kk
+                self.V[n2] = opcode & 0x00FF
             case _:
                 pass

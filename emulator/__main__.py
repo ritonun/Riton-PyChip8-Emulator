@@ -23,12 +23,19 @@ while run:
             run = False
     pygame.display.set_caption(f"{CAPTION} - {round(clock.get_fps(), 1)} fps")
 
+    for y in range(32):
+        for x in range(64):
+            if cpu.display[y][x]:
+                screen.set_at((x, y), (255, 255, 255))
+            else:
+                screen.set_at((x, y), (0, 0, 0))
+            
+
+
     display.fill((0, 0, 0))
-    screen.fill((255, 0, 0))
+    screen.fill((0, 0, 0))
 
     display.blit(pygame.transform.scale(screen, (64*8, 32*8)), (0, 0))
-
-
 
     pygame.display.update()
     dt = clock.tick(60)

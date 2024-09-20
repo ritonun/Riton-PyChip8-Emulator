@@ -69,6 +69,6 @@ class CPU:
         byte_one = self.memory[self.pc]
         byte_two = self.memory[self.pc + 1]
         opcode = (byte_two << 8) | byte_one
-        print(hex(byte_one), hex(byte_two), hex(opcode))
+
         self.pc += 2
         return opcode

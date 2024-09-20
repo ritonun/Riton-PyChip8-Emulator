@@ -45,6 +45,15 @@ class CPU:
         self.V = [0] * STACK_SIZE
         self.delay_timer = 0
         self.sound_timer = 0
+        self.init_display()
+
+    def init_display(self):
+        self.display = []
+
+        for y in range(32):
+            self.display.append([])
+            for x in range(64):
+                self.display[y].append(0)
 
     def update_timer(self):
         if self.delay_timer > 0:

@@ -26,6 +26,7 @@ fonts = [
     0xF0, 0x80, 0xF0, 0x80, 0x80  # F
 ]
 
+
 class CPU:
     def __init__(self):
         self.memory = [0] * MEMORY_SIZE
@@ -50,3 +51,15 @@ class CPU:
             self.delay_timer -= 1
         if self.sound_timer > 0:
             self.sound_timer -= 1
+
+    def load_fonts(self):
+        for i in range(len(fonts)):
+            self.memory[i] = fonts[i]
+
+    def fetch_opcode(self):
+        byte_one = self.memory[self.pc]
+        byte_two = self.memory[self.pc + 1]
+        opcode = (byte_two << 8) | byte_one
+        print(hex(byte_one), hex(byte_two), hex(opcode))
+        self.pc += 2
+        return opcode

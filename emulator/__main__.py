@@ -2,11 +2,19 @@ import sys
 
 import pygame
 
+from emulator.cpu import CPU
+
+
 display = pygame.display.set_mode((64*8, 32*8))
 screen = pygame.Surface((64, 32))
 CAPTION = "Riton's PyChip8 Emulator"
 pygame.display.set_caption(CAPTION)
 clock = pygame.time.Clock()
+
+cpu = CPU()
+cpu.initialize_cpu()
+cpu.load_fonts()
+cpu.fetch_opcode()
 
 run = True
 while run:

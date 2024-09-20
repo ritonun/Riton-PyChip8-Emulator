@@ -1,6 +1,8 @@
 import struct 
 import logging
 
+def merge_two_byte(b1, b2):
+    return (b1 << 8) | b2
 
 # CONST
 MEMORY_SIZE = 4096
@@ -39,6 +41,7 @@ class CPU:
         self.V = [0] * STACK_SIZE
         self.delay_timer = 0
         self.sound_timer = 0
+        self.display = []
 
     def initialize_cpu(self):
         self.memory = [0] * MEMORY_SIZE
@@ -57,6 +60,11 @@ class CPU:
             self.display.append([])
             for x in range(64):
                 self.display[y].append(0)
+
+    def clear_screen(self):
+        for y in range(32):
+            for x in range(64):
+                self.display[y][x] = 0
 
     def update_timer(self):
         if self.delay_timer > 0:
@@ -93,16 +101,29 @@ class CPU:
 
     def decode(self):
         opcode = self.fetch_opcode()
+        print(hex(opcode))
 
         n1 = (opcode >> 12) & 0xF
         n2 = (opcode >> 8) & 0xF
         n3 = (opcode >> 4) & 0xF
         n4 = opcode & 0xF
 
-        print(hex(n1), hex(n2), hex(n3), hex(n4))
+        logging.debug(f"n1({hex(n1)}) n2({hex(n2)}) n3({hex(n3)}) n4({hex(n4)}) op({hex(opcode)})")
 
         match n1:
             case 0x0:
-                print('case 1')
+                if n2 == 0x0 and n3 == 0xE and n4 == 0xE:
+                    #0x00EE ret
+                    pass
+                elif n2 == 0x0 and n3 == 0xE:
+                    # 0x00E0 clear screen
+                    logging.info("0x00E0 CLS")
+                    self.clear_screen()
+                else:
+                    # 0x0nnn sys addr
+                    pass
+            case 0x1:
+                # 0x1nnn jump to location nnn
+                self.pc = opcode & 0x0FFF
             case _:
-                print('error')
+                pass

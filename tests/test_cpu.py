@@ -61,3 +61,10 @@ class TestOpcode:
         cpu.decode()
 
         assert cpu.V[6] == 0x13
+
+    def test_7xkk(self):
+        # set Vx = Vx + kk
+        cpu = opcode_setup(0x70, 0x13)
+        cpu.V[0] = 5
+        cpu.decode()
+        assert cpu.V[0] == 5 + 0x13

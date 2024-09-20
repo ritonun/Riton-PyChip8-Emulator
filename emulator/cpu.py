@@ -128,5 +128,8 @@ class CPU:
             case 0x6:
                 # 0x6xkk set Vx = kk
                 self.V[n2] = opcode & 0x00FF
+            case 0x7:
+                # 0x7xkk set Vx = Vx + kk
+                self.V[n2] += opcode & 0x00FF
             case _:
                 pass

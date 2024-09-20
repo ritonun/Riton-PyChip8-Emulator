@@ -1,4 +1,5 @@
 import struct 
+import logging
 
 
 # CONST
@@ -84,6 +85,8 @@ class CPU:
         byte_one = self.memory[self.pc]
         byte_two = self.memory[self.pc + 1]
         opcode = (byte_one << 8) | byte_two
+
+        logging.debug(f"fetch(): pc({hex(self.pc)}) b1({hex(byte_one)}) b2({hex(byte_two)}) opcode({opcode})")
 
         self.pc += 2
         return opcode

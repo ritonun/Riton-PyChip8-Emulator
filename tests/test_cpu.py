@@ -2,6 +2,15 @@ import pytest
 from emulator.cpu import CPU, fonts
 
 
+def opcode_setup(o1, o2):
+    cpu = CPU()
+    cpu.initialize_cpu()
+
+    cpu.memory[0] = o1
+    cpu.memory[1] = o2
+    return cpu
+
+
 class TestCpu:
     def test_load_fonts(self):
         cpu = CPU()
@@ -41,11 +50,14 @@ class TestOpcode:
 
     def test_1nnn(self):
         # jump to addr nnn
-        cpu = CPU()
-        cpu.initialize_cpu()
-
-        cpu.memory[0] = 0x10
-        cpu.memory[1] = 0xFF
+        opcode_setup(0x10, 0xFF)
         cpu.decode()
 
         assert cpu.pc == 0xFF 
+
+    def test_6nnn(self):
+        # set Vx = kk
+        cpu = CPU()
+        cpu.initialize_cpu()
+
+        cpu.memory[0] = 

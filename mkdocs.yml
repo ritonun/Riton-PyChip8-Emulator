@@ -1,0 +1,8 @@
+site_name: Riton's PyChip8
+theme:
+  name: material
+
+
+plugins:
+- search
+- mkdocstrings

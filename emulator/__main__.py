@@ -21,10 +21,14 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+    pygame.display.set_caption(f"{CAPTION} - {round(clock.get_fps(), 1)} fps")
 
     display.fill((0, 0, 0))
+    screen.fill((255, 0, 0))
 
-    pygame.display.set_caption(f"{CAPTION} - {round(clock.get_fps(), 1)} fps")
+    display.blit(pygame.transform.scale(screen, (64*8, 32*8)), (0, 0))
+
+
 
     pygame.display.update()
     dt = clock.tick(60)

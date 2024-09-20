@@ -1,3 +1,5 @@
+import struct 
+
 
 # CONST
 MEMORY_SIZE = 4096
@@ -65,10 +67,39 @@ class CPU:
         for i in range(len(fonts)):
             self.memory[i] = fonts[i]
 
+    def load_rom(self, path):
+        with open(path, 'rb') as f:
+            binary_data = f.read()
+
+        temp_array = struct.unpack(f'{len(binary_data)}B', binary_data)
+
+        if (len(temp_array) + START_ADDR) > MEMORY_SIZE:
+            print("Failed to load rom, file is too big.")
+
+        for i in range(len(temp_array)):
+            self.memory[START_ADDR + i] = temp_array[i]
+
+
     def fetch_opcode(self):
         byte_one = self.memory[self.pc]
         byte_two = self.memory[self.pc + 1]
-        opcode = (byte_two << 8) | byte_one
+        opcode = (byte_one << 8) | byte_two
 
         self.pc += 2
         return opcode
+
+    def decode(self):
+        opcode = self.fetch_opcode()
+
+        n1 = (opcode >> 12) & 0xF
+        n2 = (opcode >> 8) & 0xF
+        n3 = (opcode >> 4) & 0xF
+        n4 = opcode & 0xF
+
+        print(hex(n1), hex(n2), hex(n3), hex(n4))
+
+        match n1:
+            case 0x0:
+                print('case 1')
+            case _:
+                print('error')

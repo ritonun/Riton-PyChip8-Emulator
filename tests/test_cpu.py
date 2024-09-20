@@ -68,3 +68,8 @@ class TestOpcode:
         cpu.V[0] = 5
         cpu.decode()
         assert cpu.V[0] == 5 + 0x13
+
+    def test_Annn(self):
+        cpu = opcode_setup(0xA3, 0xFB)
+        cpu.decode()
+        assert cpu.I == 0x3FB

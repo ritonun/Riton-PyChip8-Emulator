@@ -116,28 +116,23 @@ class CPU:
                     #0x00EE ret
                     pass
                 elif n2 == 0x0 and n3 == 0xE:
-                    # 0x00E0 clear screen
                     logging.info(f"00E0 {hex(opcode)} CLS")
                     self.clear_screen()
                 else:
                     # 0x0nnn sys addr
                     pass
             case 0x1:
-                # 0x1nnn jump to location nnn
-                self.pc = opcode & 0x0FFF
                 logging.info(f"1nnn {hex(opcode)} JP addr")
+                self.pc = opcode & 0x0FFF
             case 0x6:
-                # 0x6xkk set Vx = kk
-                self.V[n2] = opcode & 0x00FF
                 logging.info(f"6xyk {hex(opcode)} LD Vx, Vy")
+                self.V[n2] = opcode & 0x00FF
             case 0x7:
-                # 0x7xkk set Vx = Vx + kk
-                self.V[n2] += opcode & 0x00FF
                 logging.info(f"7xkk {hex(opcode)} ADD Vx, byte")
+                self.V[n2] += opcode & 0x00FF
             case 0xA:
-                # 0xAnnn set I = nnn
-                self.I = opcode & 0x0FFF
                 logging.info(f"Annn {hex(opcode)} LD I, addr")
+                self.I = opcode & 0x0FFF
             case 0xD:
                 # 0xDxyn
                 logging.info(f"Dxyn {hex(opcode)} DRW Vx, Vy, nibble")

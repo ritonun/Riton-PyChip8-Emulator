@@ -94,7 +94,7 @@ class CPU:
         byte_two = self.memory[self.pc + 1]
         opcode = (byte_one << 8) | byte_two
 
-        logging.debug(f"fetch(): pc({hex(self.pc)}) b1({hex(byte_one)}) b2({hex(byte_two)}) opcode({opcode})")
+        logging.debug(f"fetch(): pc({hex(self.pc)}) b1({hex(byte_one)}) b2({hex(byte_two)}) opcode({hex(opcode)})")
 
         self.pc += 2
         return opcode
@@ -117,7 +117,7 @@ class CPU:
                     pass
                 elif n2 == 0x0 and n3 == 0xE:
                     # 0x00E0 clear screen
-                    logging.info("0x00E0 CLS")
+                    logging.info(f"00E0 {hex(opcode)} CLS")
                     self.clear_screen()
                 else:
                     # 0x0nnn sys addr
@@ -125,14 +125,46 @@ class CPU:
             case 0x1:
                 # 0x1nnn jump to location nnn
                 self.pc = opcode & 0x0FFF
+                logging.info(f"1nnn {hex(opcode)} JP addr")
             case 0x6:
                 # 0x6xkk set Vx = kk
                 self.V[n2] = opcode & 0x00FF
+                logging.info(f"6xyk {hex(opcode)} LD Vx, Vy")
             case 0x7:
                 # 0x7xkk set Vx = Vx + kk
                 self.V[n2] += opcode & 0x00FF
+                logging.info(f"7xkk {hex(opcode)} ADD Vx, byte")
             case 0xA:
                 # 0xAnnn set I = nnn
                 self.I = opcode & 0x0FFF
+                logging.info(f"Annn {hex(opcode)} LD I, addr")
+            case 0xD:
+                # 0xDxyn
+                logging.info(f"Dxyn {hex(opcode)} DRW Vx, Vy, nibble")
+
+                self.V[0xF] = 0
+                y_pos = self.V[n3] % 32
+
+                for row in range(n4):
+                    x_pos = self.V[n2] % 64
+
+                    sprite_byte = self.memory[self.I + row]
+                    sprite_bits = bin(sprite_byte)[2:].zfill(8)
+
+                    for bit in sprite_bits:
+                        if bit == '1' and self.display[y_pos][x_pos] == 1:
+                            self.display[y_pos][x_pos] = 0
+                            self.V[0xF] = 1
+                        elif bit == '1' and self.display[y_pos][x_pos] == 0:
+                            self.display[y_pos][x_pos] = 1
+
+                        x_pos += 1
+                        if x_pos > 63:
+                            break
+
+                    y_pos += 1
+                    if y_pos > 31:
+                        break
+
             case _:
                 pass

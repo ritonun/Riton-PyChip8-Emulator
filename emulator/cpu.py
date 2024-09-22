@@ -149,6 +149,52 @@ class CPU:
             case 0x7:
                 logging.info(f"7xkk {hex(opcode)} ADD Vx, byte")
                 self.V[n2] += opcode & 0x00FF
+            case 0x8:
+                match n4:
+                    case 0x0:
+                        logging.info(f"8xy0 {hex(opcode)} LD Vx, Vy")
+                        self.V[n2] = self.V[n3]
+                    case 0x1:
+                        logging.info(f"8xy1 {hex(opcode)} OR Vx, Vy")
+                        self.V[n2] = self.V[n2] | self.V[n3]
+                    case 0x2:
+                        logging.info(f"8xy2 {hex(opcode)} AND Vx, Vy")
+                        self.V[n2] = self.V[n2] & self.V[n3]
+                    case 0x3:
+                        logging.info(f"8xy3 {hex(opcode)} XOR Vx, Vy")
+                        self.V[n2] = self.V[n2] ^ self.V[n3]
+                    case 0x4:
+                        logging.info(f"8xy4 {hex(opcode)} ADD Vx, Vy")
+                        if self.V[n2] + self.V[n3] > 255:
+                            self.V[0xF] = 1
+                            self.V[n2] = self.V[n2] + self.V[n3] - 255
+                        else:
+                            self.V[0xF] = 0
+                            self.V[n2] = self.V[n2] + self.V[n3]
+                    case 0x5:
+                        logging.info(f"8xy5 {hex(opcode)} SUB Vx, Vy")
+                        if self.V[n2] > self.V[n3]:
+                            self.V[0xF] = 1
+                            self.V[n2] = self.V[n2] - self.V[n3]
+                        else:
+                            self.V[0xF] = 0
+                            self.V[n2] = 255 + (self.V[n2] - self.V[n3])
+                    case 0x6:
+                        logging.info(f"8xy6 {hex(opcode)} SHR Vx")
+                        self.V[0xF] = self.V[n2] & 0x1
+                        self.V[n2] = self.V[n2] >> 1
+                    case 0x7:
+                        logging.info(f"8xy7 {hex(opcode)} SUBN Vx, Vy")
+                        if self.V[n3] > self.V[n2]:
+                            self.V[0xF] = 1
+                            self.V[n2] = self.V[n3] - self.V[n2]
+                        else:
+                            self.V[0xF] = 0
+                            self.V[n2] = 255 + (self.V[n3] - self.V[n2])
+                    case 0xE:
+                        logging.info(f"8xy3 {hex(opcode)} SHL Vx")
+                        self.V[0xF] = (self.V[n2] & 128) >> 7
+                        self.V[n2] = self.V[n2] << 1
             case 0x9:
                 logging.info(f"9xy0 {hex(opcode)} SNE Vx, Vy")
                 if self.V[n2] != self.V[n3]:

@@ -147,6 +147,130 @@ class TestOpcode:
         cpu.decode()
         assert cpu.V[0] == 5 + 0x13
 
+    def test_8xy0(self):
+        # set Vx = Vy
+        cpu = opcode_setup(0x84, 0x50)
+        cpu.V[4] = 4
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[1] == cpu.V[2]
+
+    def test_8xy1(self):
+        # set Vx = (Vx OR Vy)
+        cpu = opcode_setup(0x84, 0x51)
+        cpu.V[4] = 4
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == (4 | 5)
+
+    def test_8xy2(self):
+        # set Vx = (Vx AND Vy)
+        cpu = opcode_setup(0x84, 0x52)
+        cpu.V[4] = 4
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == (4 & 5)
+
+    def test_8xy3(self):
+        # set Vx = (Vx XOR Vy)
+        cpu = opcode_setup(0x84, 0x53)
+        cpu.V[4] = 4
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == (4 ^ 5)
+
+    def test_8xy4(self):
+        # set Vx = (Vx + Vy), set VF = carry
+        cpu = opcode_setup(0x84, 0x54)
+        cpu.V[4] = 4
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == (4 + 5)
+        assert cpu.V[0xF] == 0
+
+        cpu = opcode_setup(0x84, 0x54)
+        cpu.V[4] = 250
+        cpu.V[5] = 50
+        cpu.decode()
+
+        assert cpu.V[4] == 250 + 50 - 255
+        assert cpu.V[0xF] == 1
+
+    def test_8xy5(self):
+        # set Vx = (Vx - Vy), set VF = NOT borrow
+        cpu = opcode_setup(0x84, 0x55)
+        cpu.V[4] = 5
+        cpu.V[5] = 10
+        cpu.decode()
+
+        assert cpu.V[4] == 250
+        assert cpu.V[0xF] == 0
+
+        cpu = opcode_setup(0x84, 0x55)
+        cpu.V[4] = 10
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == 10 - 5
+        assert cpu.V[0xF] == 1
+
+    def test_8xy6(self):
+        # set Vx = Vy SHR 1
+        cpu = opcode_setup(0x84, 0x56)
+        cpu.V[4] = 41
+        cpu.decode()
+
+        assert cpu.V[4] == 41 >> 1
+        assert cpu.V[0xF] == 1
+
+        cpu = opcode_setup(0x84, 0x56)
+        cpu.V[4] = 40
+        cpu.decode()
+
+        assert cpu.V[4] == 40 >> 1
+        assert cpu.V[0xF] == 0
+
+    def test_8xy7(self):
+        # set Vx = (Vy - Vx), set VF = NOT borrow
+        # test vy > vx
+        cpu = opcode_setup(0x84, 0x57)
+        cpu.V[4] = 5
+        cpu.V[5] = 10
+        cpu.decode()
+
+        assert cpu.V[4] == 10 - 5
+        assert cpu.V[0xF] == 1
+
+        # test vy <= vx
+        cpu = opcode_setup(0x84, 0x57)
+        cpu.V[4] = 10
+        cpu.V[5] = 5
+        cpu.decode()
+
+        assert cpu.V[4] == 255 + (5 - 10)
+        assert cpu.V[0xF] == 0
+
+    def test_8xyE(self):
+        # set Vx = Vy SHR 1
+        cpu = opcode_setup(0x84, 0x5E)
+        cpu.V[4] = 128
+        cpu.decode()
+
+        assert cpu.V[4] == 128 << 1
+        assert cpu.V[0xF] == 1
+
+        cpu = opcode_setup(0x84, 0x5E)
+        cpu.V[4] = 64
+        cpu.decode()
+
+        assert cpu.V[4] == 128  # 64 << 1
+        assert cpu.V[0xF] == 0
+
     def test_9xy0(self):
         # if Vx != Vy, skip next inst
         cpu = opcode_setup(0x91, 0x40)

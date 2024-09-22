@@ -25,7 +25,7 @@ def screen_set_pixels(display_array, surface):
 cpu = CPU()
 cpu.initialize_cpu()
 cpu.load_fonts()
-cpu.load_rom("res/IBM_Logo.ch8")
+cpu.load_rom("res/3-corax+.ch8")
 
 run = True
 while run:
@@ -50,7 +50,7 @@ while run:
     display.blit(pygame.transform.scale(screen, (64*8, 32*8)), (0, 0))
 
     pygame.display.update()
-    clock.tick(1)
+    clock.tick(60)
     
 
 pygame.quit()

@@ -4,6 +4,16 @@ import logging
 def merge_two_byte(b1, b2):
     return (b1 << 8) | b2
 
+def add(number):
+    if number > 255:
+        return number - 255
+    return number
+
+def sub(number):
+    if number < 0:
+        return 255 + number
+    return number
+
 # CONST
 MEMORY_SIZE = 4096
 STACK_SIZE = 16
@@ -95,8 +105,6 @@ class CPU:
         byte_two = self.memory[self.pc + 1]
         opcode = (byte_one << 8) | byte_two
 
-        logging.debug(f"fetch(): pc({hex(self.pc)}) b1({hex(byte_one)}) b2({hex(byte_two)}) opcode({hex(opcode)})")
-
         self.pc += 2
         return opcode
 
@@ -107,8 +115,6 @@ class CPU:
         n2 = (opcode >> 8) & 0xF
         n3 = (opcode >> 4) & 0xF
         n4 = opcode & 0xF
-
-        logging.debug(f"n1({hex(n1)}) n2({hex(n2)}) n3({hex(n3)}) n4({hex(n4)}) op({hex(opcode)})")
 
         match n1:
             case 0x0:
@@ -148,7 +154,7 @@ class CPU:
                 self.V[n2] = opcode & 0x00FF
             case 0x7:
                 logging.info(f"7xkk {hex(opcode)} ADD Vx, byte")
-                self.V[n2] += opcode & 0x00FF
+                self.V[n2] = add(self.V[n2] + opcode & 0x00FF)
             case 0x8:
                 match n4:
                     case 0x0:
@@ -231,14 +237,23 @@ class CPU:
 
             case 0xF:
                 match n3:
-                    case 3:
+                    case 0x1:
+                        match n4:
+                            case 0xE:
+                                logging.info(f"Fx1E {hex(opcode)} ADD I, Vx")
+                                self.I = self.I + self.V[n2]
+                    case 0x3:
                         logging.info(f"Fx33 {hex(opcode)} LD B, Vx")
                         self.memory[I] = self.V[n2] // 100
                         self.memory[I+1] = (self.V[n2] // 10) % 10
                         self.memory[I+2] = (self.V[n2] % 10)
-                    case 5:
+                    case 0x5:
                         logging.info(f"Fx55 {hex(opcode)} LD [I], Vx")
                         for i in range(0xF):
                             self.memory[self.I+i] = self.V[i]
+                    case 0x6:
+                        logging.info(f"Fx65 {hex(opcode)} LD Vx, [I]")
+                        for i in range(0xF):
+                            self.V[i] = self.memory[self.I+i]
             case _:
                 pass

@@ -310,3 +310,21 @@ class TestOpcode:
 
         for i in range(0xF):
             assert cpu.memory[cpu.I+i] == i
+
+    def test_fx65(self):
+        cpu = opcode_setup(0xF1, 0x65)
+        cpu.I = 10
+        for i in range(0xF):
+            cpu.memory[10 + i] = i
+        cpu.decode()
+
+        for i in range(0xF):
+            assert cpu.V[i] == i
+
+    def test_fx1E(self):
+        cpu = opcode_setup(0xF1, 0x1E)
+        cpu.V[1] = 10
+        cpu.I = 16
+        cpu.decode()
+
+        assert cpu.I == 10 + 16

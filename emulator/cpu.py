@@ -149,6 +149,10 @@ class CPU:
             case 0x7:
                 logging.info(f"7xkk {hex(opcode)} ADD Vx, byte")
                 self.V[n2] += opcode & 0x00FF
+            case 0x9:
+                logging.info(f"9xy0 {hex(opcode)} SNE Vx, Vy")
+                if self.V[n2] != self.V[n3]:
+                    self.pc += 2
             case 0xA:
                 logging.info(f"Annn {hex(opcode)} LD I, addr")
                 self.I = opcode & 0x0FFF

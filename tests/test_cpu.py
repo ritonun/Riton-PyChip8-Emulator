@@ -126,7 +126,7 @@ class TestOpcode:
 
         assert cpu.pc == 0x204
 
-        cpu = opcode_setup(0x31, 0x45)
+        cpu = opcode_setup(0x51, 0x40)
         cpu.V[1] = 1
         cpu.V[4] = 2
         cpu.decode()
@@ -148,7 +148,20 @@ class TestOpcode:
         assert cpu.V[0] == 5 + 0x13
 
     def test_9xy0(self):
+        # if Vx != Vy, skip next inst
+        cpu = opcode_setup(0x91, 0x40)
+        cpu.V[1] = 1
+        cpu.V[4] = 1
+        cpu.decode()
 
+        assert cpu.pc == 0x202
+
+        cpu = opcode_setup(0x91, 0x45)
+        cpu.V[1] = 1
+        cpu.V[4] = 2
+        cpu.decode()
+
+        assert cpu.pc == 0x204
 
     def test_Annn(self):
         cpu = opcode_setup(0xA3, 0xFB)

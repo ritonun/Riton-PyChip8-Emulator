@@ -291,3 +291,22 @@ class TestOpcode:
         cpu = opcode_setup(0xA3, 0xFB)
         cpu.decode()
         assert cpu.I == 0x3FB
+
+    def text_fx33(self):
+        cpu = opcode_setup(0xF1, 0x33)
+        cpu.V[1] = 156
+        cpu.decode()
+
+        assert cpu.memory[cpu.I] == 1
+        assert cpu.memory[cpu.I+1] == 5
+        assert cpu.memory[cpu.I+2] == 6
+
+    def test_fx55(self):
+        cpu = opcode_setup(0xF1, 0x55)
+        cpu.I = 10
+        for i in range(0xF):
+            cpu.V[i] = i
+        cpu.decode()
+
+        for i in range(0xF):
+            assert cpu.memory[cpu.I+i] == i

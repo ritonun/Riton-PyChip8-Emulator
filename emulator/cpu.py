@@ -229,5 +229,16 @@ class CPU:
                     if y_pos > 31:
                         break
 
+            case 0xF:
+                match n3:
+                    case 3:
+                        logging.info(f"Fx33 {hex(opcode)} LD B, Vx")
+                        self.memory[I] = self.V[n2] // 100
+                        self.memory[I+1] = (self.V[n2] // 10) % 10
+                        self.memory[I+2] = (self.V[n2] % 10)
+                    case 5:
+                        logging.info(f"Fx55 {hex(opcode)} LD [I], Vx")
+                        for i in range(0xF):
+                            self.memory[self.I+i] = self.V[i]
             case _:
                 pass

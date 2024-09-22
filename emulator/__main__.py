@@ -26,7 +26,6 @@ cpu = CPU()
 cpu.initialize_cpu()
 cpu.load_fonts()
 cpu.load_rom("res/IBM_Logo.ch8")
-cpu.pc = 0x200
 
 run = True
 while run:

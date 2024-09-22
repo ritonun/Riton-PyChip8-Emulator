@@ -6,8 +6,8 @@ def opcode_setup(o1, o2):
     cpu = CPU()
     cpu.initialize_cpu()
 
-    cpu.memory[0] = o1
-    cpu.memory[1] = o2
+    cpu.memory[0x200] = o1
+    cpu.memory[0x200+1] = o2
     return cpu
 
 
@@ -57,6 +57,17 @@ class TestOpcode:
 
         assert display == cpu.display
 
+    def test_00EE(self):
+        cpu = opcode_setup(0x00, 0xEE)
+
+        cpu.stack[0] = 0x500
+        cpu.sp = 1
+
+        cpu.decode()
+
+        assert cpu.pc == 0x500
+        assert cpu.sp == 0
+
     def test_1nnn(self):
         # jump to addr nnn
         cpu = opcode_setup(0x10, 0xFF)
@@ -67,6 +78,14 @@ class TestOpcode:
 
         assert cpu.pc == 0xFF 
         assert cpu2.pc == 0x228
+
+    def test_2nnn(self):
+        cpu = opcode_setup(0x23, 0x45)
+        cpu.decode()
+
+        assert cpu.pc == 0x345
+        assert cpu.stack[0] == 0x200
+        assert cpu.sp == 1
 
     def test_6xkk(self):
         # set Vx = kk

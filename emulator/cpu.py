@@ -35,7 +35,7 @@ fonts = [
 class CPU:
     def __init__(self):
         self.memory = [0] * MEMORY_SIZE
-        self.pc = 0     # progress counter
+        self.pc = START_ADDR     # progress counter
         self.I = 0  # 16 bit
         self.stack = [0] * STACK_SIZE
         self.V = [0] * STACK_SIZE
@@ -45,9 +45,10 @@ class CPU:
 
     def initialize_cpu(self):
         self.memory = [0] * MEMORY_SIZE
-        self.pc = 0     # progress counter
+        self.pc = START_ADDR    # progress counter
         self.I = 0  # 16 bit
         self.stack = [0] * STACK_SIZE
+        self.sp = 0     # stack pointer
         self.V = [0] * STACK_SIZE
         self.delay_timer = 0
         self.sound_timer = 0
@@ -113,8 +114,9 @@ class CPU:
         match n1:
             case 0x0:
                 if n2 == 0x0 and n3 == 0xE and n4 == 0xE:
-                    #0x00EE ret
-                    pass
+                    logging.info(f"00EE {hex(opcode)} RET")
+                    self.sp -= 1
+                    self.pc = self.stack[self.sp]
                 elif n2 == 0x0 and n3 == 0xE:
                     logging.info(f"00E0 {hex(opcode)} CLS")
                     self.clear_screen()
@@ -123,6 +125,12 @@ class CPU:
                     pass
             case 0x1:
                 logging.info(f"1nnn {hex(opcode)} JP addr")
+                self.pc = opcode & 0x0FFF
+            case 0x2:
+                logging.info(f"2nnn {hex(opcode)} CALL addr")
+                self.pc -= 2
+                self.stack[self.sp] = self.pc
+                self.sp += 1
                 self.pc = opcode & 0x0FFF
             case 0x6:
                 logging.info(f"6xyk {hex(opcode)} LD Vx, Vy")

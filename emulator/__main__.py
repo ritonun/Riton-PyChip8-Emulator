@@ -37,8 +37,8 @@ while run:
     # show fps
     pygame.display.set_caption(f"{CAPTION} - {round(clock.get_fps(), 1)} fps")
 
-    # progress though cpu emulation 
-    for instruction in range(1):
+    # progress though cpu emulation at 600 instructions/second
+    for instruction in range(10):   # 600 instructions / 60 FPS = 10 inst per fps
         cpu.decode()
 
     # DRAW

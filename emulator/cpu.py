@@ -134,7 +134,6 @@ class CPU:
                 logging.info(f"Annn {hex(opcode)} LD I, addr")
                 self.I = opcode & 0x0FFF
             case 0xD:
-                # 0xDxyn
                 logging.info(f"Dxyn {hex(opcode)} DRW Vx, Vy, nibble")
 
                 self.V[0xF] = 0

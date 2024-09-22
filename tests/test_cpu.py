@@ -43,7 +43,7 @@ class TestCpu:
 
 class TestOpcode:
     def test_00E0(self):
-        """ clear screen """
+        # clear screen
         cpu = CPU()
         cpu.initialize_cpu()
 
@@ -58,6 +58,7 @@ class TestOpcode:
         assert display == cpu.display
 
     def test_00EE(self):
+        # return from a suboutine
         cpu = opcode_setup(0x00, 0xEE)
 
         cpu.stack[0] = 0x500
@@ -80,6 +81,7 @@ class TestOpcode:
         assert cpu2.pc == 0x228
 
     def test_2nnn(self):
+        # call subroutine at nnn
         cpu = opcode_setup(0x23, 0x45)
         cpu.decode()
 
@@ -88,6 +90,7 @@ class TestOpcode:
         assert cpu.sp == 1
 
     def test_3xkk(self):
+        # if Vx == kk, skip next inst
         cpu = opcode_setup(0x31, 0x45)
         cpu.V[1] = 0x45
         cpu.decode()
@@ -96,6 +99,36 @@ class TestOpcode:
 
         cpu = opcode_setup(0x31, 0x45)
         cpu.V[1] = 0x00
+        cpu.decode()
+
+        assert cpu.pc == 0x202
+
+    def test_4xkk(self):
+        # if Vx != kk, skip next inst
+        cpu = opcode_setup(0x41, 0x45)
+        cpu.V[1] = 0x45
+        cpu.decode()
+
+        assert cpu.pc == 0x202
+
+        cpu = opcode_setup(0x41, 0x45)
+        cpu.V[1] = 0x00
+        cpu.decode()
+
+        assert cpu.pc == 0x204
+
+    def test_5xy0(self):
+        # if Vx == Vy, skip next inst
+        cpu = opcode_setup(0x51, 0x40)
+        cpu.V[1] = 1
+        cpu.V[4] = 1
+        cpu.decode()
+
+        assert cpu.pc == 0x204
+
+        cpu = opcode_setup(0x31, 0x45)
+        cpu.V[1] = 1
+        cpu.V[4] = 2
         cpu.decode()
 
         assert cpu.pc == 0x202
@@ -113,6 +146,9 @@ class TestOpcode:
         cpu.V[0] = 5
         cpu.decode()
         assert cpu.V[0] == 5 + 0x13
+
+    def test_9xy0(self):
+
 
     def test_Annn(self):
         cpu = opcode_setup(0xA3, 0xFB)

@@ -135,6 +135,14 @@ class CPU:
                 logging.info(f"3xnn {hex(opcode)} SE Vx, byte")
                 if self.V[n2] == opcode & 0x00FF:
                     self.pc += 2
+            case 0x4:
+                logging.info(f"4xnn {hex(opcode)} SNE Vx, byte")
+                if self.V[n2] != opcode & 0x00FF:
+                    self.pc += 2
+            case 0x5:
+                logging.info(f"5xy0 {hex(opcode)} SE Vx, Vy")
+                if self.V[n2] == self.V[n3]:
+                    self.pc += 2
             case 0x6:
                 logging.info(f"6xyk {hex(opcode)} LD Vx, Vy")
                 self.V[n2] = opcode & 0x00FF

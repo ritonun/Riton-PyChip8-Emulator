@@ -87,6 +87,19 @@ class TestOpcode:
         assert cpu.stack[0] == 0x200
         assert cpu.sp == 1
 
+    def test_3xkk(self):
+        cpu = opcode_setup(0x31, 0x45)
+        cpu.V[1] = 0x45
+        cpu.decode()
+
+        assert cpu.pc == 0x204
+
+        cpu = opcode_setup(0x31, 0x45)
+        cpu.V[1] = 0x00
+        cpu.decode()
+
+        assert cpu.pc == 0x202
+
     def test_6xkk(self):
         # set Vx = kk
         cpu = opcode_setup(0x66, 0x13)

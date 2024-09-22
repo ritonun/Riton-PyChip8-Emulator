@@ -102,7 +102,6 @@ class CPU:
 
     def decode(self):
         opcode = self.fetch_opcode()
-        print(hex(opcode))
 
         n1 = (opcode >> 12) & 0xF
         n2 = (opcode >> 8) & 0xF
@@ -132,6 +131,10 @@ class CPU:
                 self.stack[self.sp] = self.pc
                 self.sp += 1
                 self.pc = opcode & 0x0FFF
+            case 0x3:
+                logging.info(f"3xnn {hex(opcode)} SE Vx, byte")
+                if self.V[n2] == opcode & 0x00FF:
+                    self.pc += 2
             case 0x6:
                 logging.info(f"6xyk {hex(opcode)} LD Vx, Vy")
                 self.V[n2] = opcode & 0x00FF
